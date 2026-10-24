@@ -23,7 +23,7 @@
     emit('syncing','正在比對雲端資料');let first=true;
     unsubscribe=api.onSnapshot(ref(),async snap=>{
       if(!snap.exists()){
-        if(first){first=false;try{const old=await api.getDoc(legacyRef());if(old.exists()&&old.data().state)receive(snapshot(old.data().state))}catch{}await pushNow()}
+        if(first){first=false;try{const old=await api.getDoc(legacyRef()),legacy=old.exists()?old.data():null,local=getLocal();if(legacy?.state&&Number(legacy.updatedAt||legacy.state.updatedAt||0)>Number(local.updatedAt||0))receive(snapshot(legacy.state))}catch{}await pushNow()}
         return;
       }
       first=false;const remote=snap.data(),local=getLocal();setSharing(remote);
