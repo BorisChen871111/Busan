@@ -37,6 +37,8 @@ HTTPS 或 localhost 下會安裝 Service Worker 快取。首次完整載入後�
 
 「每日行程」可在手機或電腦直接編輯日期、標題、路線、提醒與每個時間點，也可新增、刪除及調整順序。既有 localStorage 會自動補入預設行程，JSON 備份現在包含行程資料。
 
+時間點的地點欄位使用完整 http / https 連結。舊資料若仍保存 Naver 搜尋關鍵字，只在顯示時轉成可直接開啟的搜尋網址，不會重建或覆蓋使用者已儲存的行程。
+
 跨裝置功能使用 Firebase Authentication（Google 登入）與 Cloud Firestore。網站可先維持本機模式；要啟用雲端同步：
 
 1. 建立 Firebase 專案並註冊 Web app。
