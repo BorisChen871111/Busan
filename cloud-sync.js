@@ -35,7 +35,7 @@
   async function signIn(){
     if(!ready){emit('error','Firebase 尚未設定完成');return}
     const provider=new api.GoogleAuthProvider();
-    try{await api.signInWithPopup(auth,provider)}catch(error){if(['auth/popup-blocked','auth/cancelled-popup-request'].includes(error?.code))await api.signInWithRedirect(auth,provider);else emit('error',friendly(error))}
+    try{await api.signInWithRedirect(auth,provider)}catch(error){emit('error',friendly(error))}
   }
   async function signOutUser(){if(auth)await api.signOut(auth)}
   function queue(){if(!user||!ready)return;clearTimeout(pushTimer);pushTimer=setTimeout(pushNow,700)}
