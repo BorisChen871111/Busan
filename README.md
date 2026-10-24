@@ -47,7 +47,9 @@ HTTPS 或 localhost 下會安裝 Service Worker 快取。首次完整載入後�
 4. 將 Firebase 主控台提供的 firebaseConfig 貼入 sync-config.js 的 window.BUSAN_SYNC_CONFIG。
 5. 提交並推送後，在每台裝置使用同一 Google 帳號登入。
 
-Firebase Web config 不是私密金鑰；Firestore Rules 才是存取控制。規則只允許登入者讀寫自己的 users/{uid}/trips 資料。不要將 service account、私鑰或其他伺服器密鑰加入 repository。
+Firebase Web config 不是私密金鑰；Firestore Rules 才是存取控制。規則只允許共享行程的擁有者與受邀 Email 讀寫資料。不要將 service account、私鑰或其他伺服器密鑰加入 repository。
+
+同步採 Firestore 即時監聽，每次本機變更延遲約 700ms 後自動寫入，不需要按手動同步。第一個建立共享行程的登入者為擁有者，可在「裝置同步」加入其他 Google Email；受邀帳號登入後共同讀寫 trips/busan-2026。Firebase Console 必須發布 repository 內最新版 firebase-rules.txt，舊版 users/{uid}/trips 文件暫時保留供首次遷移。
 
 新增 budget.js：花費新增／修改／刪除、按日篩選與 KRW／TWD 分別加總。金額採整數最小單位計算，避免小數誤差。執行 node budget.test.cjs 可驗證金額驗證與加總。
 
