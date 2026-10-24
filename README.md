@@ -19,7 +19,7 @@
 - `style.css`：桌面與手機排版。
 - 本機於此資料夾執行 `python -m http.server 4173`，瀏覽 http://localhost:4173。
 - `node --check app.js`、`node --check data.js`、`node --check sw.js` 可檢查語法。
-- 所有地圖按鈕為 Naver 關鍵字搜尋，不代表已驗證分店定位。
+- 地圖已加入原收藏座標；有 Naver place ID 的店家直連原地點，其餘使用地址搜尋。
 
 ## 離線與備份
 
@@ -37,12 +37,18 @@ HTTPS 或 localhost 下會安裝 Service Worker 快取。首次完整載入後�
 
 更新 GitHub 請覆蓋 index.html、style.css、data.js、app.js、sw.js，並新增 budget.js。先匯出本機備份，保持原網域與路徑可繼續讀取既有資料。重新整理載入新版本；手機離線請實機複驗。
 
-交通建議按區域規劃，Naver 清單與飯店定位尚待提供；時間不是即時導航，沒有虛構 Uber 報價。
+交通建議按區域規劃，已匯入 Naver 收藏，Airbnb 精確門牌尚待提供；時間不是即時導航，沒有虛構 Uber 報價。
 
-## 收藏地圖更新
+## 真實收藏地圖（2026-10-24）
 
-首頁主文案改為「釜山行」。新增 places.js（6 份 Naver 清單 81 筆收藏＋1 個住宿周邊參考點）與 trip-map.js（可搜尋、分類、選區、點編號查看地址及 Day 1–4 區域動線）。地圖以 SVG 繪製，不需要圖片 API 或外部圖資，不按比例、不可取代實際導航。地點使用原清單地址，不將鄰店備註誤當精確入口；重複收藏保留各自編號。
+使用 Leaflet + OpenStreetMap 底圖與網站自訂標記，沒有嵌入 Google 地圖。83 筆 Naver 收藏＋1 個住宿周邊參考，共 84 筆；座標來自使用者提供的六份公開 Naver 收藏資料，保存於 locations.js。新增兩個蛋糕收藏不變更 trove.cake 的取貨行程。
 
-住宿仍在廣安里 All Sunday 附近。廣安路61番街28號是貝果店地址，不是 Airbnb 門牌；松島地址只是收藏。Airbnb 行李寄存須先和房東確認。拍貼收藏含昌原上南分店，標為釜山市外，不排入四日路線。
+支援拖曳、雙指縮放、區域／類別篩選、跨區文字搜尋、群組展開、點標記彈出店名與地址，以及清單定位。相同座標的收藏會在放大後展開，原收藏編號保留。所有定位是收藏點，並非實地確認商店入口；H01 與 All Sunday 共用座標，Airbnb 精確地址仍待房東提供。
 
-上傳時請連同 places.js、trip-map.js 更新；既有記帳與連結的 localStorage key 不變。
+資料為此次匯入快照，之後修改 Naver 清單不會自動同步。新增兩個蛋糕收藏為 K02、K03，K01 維持 trove.cake。昌原拍貼收藏仍標示市外。
+
+底圖需連網。使用瀏覽器正常 HTTP 快取，不預抓或離線下載地圖磚；保留 OpenStreetMap attribution。圖資使用政策：https://operations.osmfoundation.org/policies/tiles/ 。服務無可用性保證，底圖失敗時仍可查看收藏及 Naver 連結。COASTAL_TILE_URL 可切換服務來源。
+
+vendor/ 內含 Leaflet 1.9.4 與 MarkerCluster 1.5.3，以及對應授權。上傳 GitHub 時請包含整個 vendor/、locations.js 及其餘網站檔案。localStorage key 不變；更新前仍建議匯出備份。
+
+使用 HTTP 本機伺服器或 GitHub Pages HTTPS 預覽，不以 file:// 當正式地圖預覽（底圖請求須有正常來源資訊）。開啟 index.html#map 可直接進入地圖頁。手機寬度以 iframe 檢查；實體手機觸控仍需使用者複驗。

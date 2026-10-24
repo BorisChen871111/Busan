@@ -735,3 +735,7 @@ PLACES.push({id:'H01',name:'住宿周邊・All Sunday 附近（非 Airbnb 門牌
 const allSunday=PLACES.find(p=>p.id==='C17');allSunday.url='https://pcmap.place.naver.com/restaurant/1961227826/home';allSunday.note+='；道路名地址：부산 수영구 광안로61번길 28 1층。距廣安站 3 號出口 781 公尺（Naver 店家頁）。';
 
 PLACES.find(p=>p.id==='S19').region='金海機場';
+
+// Two additional cake bookmarks found in the shared collection on 2026-10-24.
+PLACES.push({id:'K02',name:'Nan.e.cake・客製化蛋糕收藏',category:'蛋糕',region:'廣安里',address:'부산광역시 수영구 광남로 166',note:'新增收藏候選；生日取貨行程仍保留 trove.cake，未改訂單。',source:'https://naver.me/GmpchdSb'},{id:'K03',name:'田浦蛋糕收藏・店名待確認',category:'蛋糕',region:'西面／田浦',address:'부산광역시 부산진구 전포대로176번길 47',note:'原收藏只有地址，店名與營業狀態待確認。',source:'https://naver.me/GmpchdSb'});
+COLLECTIONS.find(c=>c.label==='蛋糕').count=3;
