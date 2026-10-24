@@ -10,7 +10,7 @@
 4. 若上傳整個 busan-trip 子資料夾，網址需加 /busan-trip/。所有資源使用相對路徑，支援專案子路徑。
 5. 手機開啟網站，匯入電腦匯出的 busan-backup.json。瀏覽器的資料不會同步回 repository。
 
-尚未設定 Git remote，也尚未發布。網站不是登入保護的私密資料庫。不要上傳護照、卡號、票券 QR 或私人備份。
+網站已發布至 GitHub Pages；公開頁面本身不是私密資料庫。啟用 Firebase 後，個人資料由 Google 登入與 Firestore Rules 隔離。不要上傳護照、卡號、票券 QR 或私人備份。
 
 ## 修改與預覽
 
@@ -32,6 +32,20 @@ HTTPS 或 localhost 下會安裝 Service Worker 快取。首次完整載入後�
 交通為規劃估值，未查實際即時班次；飯店確切地址待補。Luge／藍線未訂票，餐廳未預訂。蛋糕地址和 19:00 關門由使用者提供，需確認週二接單。官方來源與查核日期顯示於「行前與交通」。SES 資格／週日金海櫃台未證實，僅保留詢問與教學欄位。無人機秀、未確認限定香不列保證活動。
 
 ## 本次更新
+
+### 行程編輯與跨裝置同步（2026-10-24）
+
+「每日行程」可在手機或電腦直接編輯日期、標題、路線、提醒與每個時間點，也可新增、刪除及調整順序。既有 localStorage 會自動補入預設行程，JSON 備份現在包含行程資料。
+
+跨裝置功能使用 Firebase Authentication（Google 登入）與 Cloud Firestore。網站可先維持本機模式；要啟用雲端同步：
+
+1. 建立 Firebase 專案並註冊 Web app。
+2. Authentication 啟用 Google 登入，Authorized domains 加入 borischen871111.github.io。
+3. 建立 Cloud Firestore，將 firebase-rules.txt 內容發布為規則。
+4. 將 Firebase 主控台提供的 firebaseConfig 貼入 sync-config.js 的 window.BUSAN_SYNC_CONFIG。
+5. 提交並推送後，在每台裝置使用同一 Google 帳號登入。
+
+Firebase Web config 不是私密金鑰；Firestore Rules 才是存取控制。規則只允許登入者讀寫自己的 users/{uid}/trips 資料。不要將 service account、私鑰或其他伺服器密鑰加入 repository。
 
 新增 budget.js：花費新增／修改／刪除、按日篩選與 KRW／TWD 分別加總。金額採整數最小單位計算，避免小數誤差。執行 node budget.test.cjs 可驗證金額驗證與加總。
 
