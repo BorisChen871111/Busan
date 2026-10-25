@@ -37,7 +37,7 @@ HTTPS 或 localhost 下會安裝 Service Worker 快取。首次完整載入後�
 
 「每日行程」可在手機或電腦直接編輯日期、標題、路線、提醒與每個時間點，也可新增、刪除及調整順序。既有 localStorage 會自動補入預設行程，JSON 備份現在包含行程資料。
 
-時間點的地點欄位使用完整 http / https 連結。舊資料若仍保存 Naver 搜尋關鍵字，只在顯示時轉成可直接開啟的搜尋網址，不會重建或覆蓋使用者已儲存的行程。
+每個時間點可保存最多 12 個具名稱的 http / https 連結。舊資料若仍保存單一連結或 Naver 搜尋關鍵字，會自動相容；搜尋關鍵字只在顯示時轉成可直接開啟的搜尋網址，不會重建或覆蓋使用者已儲存的行程。
 
 跨裝置功能使用 Firebase Authentication（Google 登入）與 Cloud Firestore。網站可先維持本機模式；要啟用雲端同步：
 
@@ -51,9 +51,9 @@ Firebase Web config 不是私密金鑰；Firestore Rules 才是存取控制。�
 
 同步採 Firestore 即時監聽，每次本機變更延遲約 700ms 後自動寫入，不需要按手動同步。第一個建立共享行程的登入者為擁有者，可在「裝置同步」加入其他 Google Email；受邀帳號登入後共同讀寫 trips/busan-2026。受邀裝置首次連線會優先採用共享雲端內容；若裝置在受邀前已登入而被拒絕，可按「重新連線」重建監聽。完整行程以 JSON 字串存入 stateJson，避免 Standard edition 不支援陣列內再包含陣列。Firebase Console 必須發布 repository 內最新版 firebase-rules.txt，舊版 users/{uid}/trips 文件暫時保留供首次遷移。
 
-新增 budget.js：花費新增／修改／刪除、按日篩選與 KRW／TWD 分別加總。金額採整數最小單位計算，避免小數誤差。執行 node budget.test.cjs 可驗證金額驗證與加總。
+新增 budget.js：花費新增／修改／刪除、按日篩選與 KRW／TWD 分別加總。金額採整數最小單位計算，避免小數誤差。exchange.js 提供 TWD／KRW 雙向即時換算；公開匯率免 API key、每日更新並快取到下次更新，失敗時可手動輸入參考匯率。
 
-更新 GitHub 請覆蓋 index.html、style.css、data.js、app.js、sw.js，並新增 budget.js。先匯出本機備份，保持原網域與路徑可繼續讀取既有資料。重新整理載入新版本；手機離線請實機複驗。
+更新 GitHub 請覆蓋 index.html、style.css、data.js、app.js、sw.js，並保留 budget.js、exchange.js。先匯出本機備份，保持原網域與路徑可繼續讀取既有資料。重新整理載入新版本；手機離線請實機複驗。
 
 交通建議按區域規劃，已匯入 Naver 收藏，Airbnb 精確門牌尚待提供；時間不是即時導航，沒有虛構 Uber 報價。
 
