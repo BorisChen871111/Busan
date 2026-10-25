@@ -11,8 +11,13 @@ service cloud.firestore {
                     && request.resource.data.ownerEmail == request.auth.token.email
                     && request.resource.data.members == [request.auth.token.email];
 
-      allow read: if signedInWithEmail()
-                  && resource.data.members.hasAny([request.auth.token.email]);
+      // A signed-in user must be able to observe that the fixed trip document
+      // does not exist yet; otherwise the first owner can never reach create.
+      // Once it exists, only the owner/invited email list can read its data.
+      allow get: if signedInWithEmail()
+                 && (resource == null
+                     || resource.data.members.hasAny([request.auth.token.email]));
+      allow list: if false;
 
       allow update: if signedInWithEmail()
                     && resource.data.members.hasAny([request.auth.token.email])

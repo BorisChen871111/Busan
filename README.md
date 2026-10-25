@@ -43,7 +43,7 @@ HTTPS 或 localhost 下會安裝 Service Worker 快取。首次完整載入後�
 
 1. 建立 Firebase 專案並註冊 Web app。
 2. Authentication 啟用 Google 登入，Authorized domains 加入 borischen871111.github.io。
-3. 建立 Cloud Firestore，將 firebase-rules.txt 內容發布為規則。
+3. 建立 Cloud Firestore，將 firebase-rules.txt 內容發布為規則。規則允許登入者確認固定行程文件尚未建立，讓第一位登入者成為擁有者；文件建立後只有擁有者與受邀 Email 可以讀取。
 4. 將 Firebase 主控台提供的 firebaseConfig 貼入 sync-config.js 的 window.BUSAN_SYNC_CONFIG。
 5. 提交並推送後，在每台裝置使用同一 Google 帳號登入。
 
