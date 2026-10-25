@@ -3,6 +3,11 @@
   let api=null,auth=null,db=null,user=null,unsubscribe=null,receive=()=>{},report=()=>{},getLocal=()=>null,pushTimer=null,ready=false;
   let sharing={ownerUid:'',ownerEmail:'',members:[]};
   const snapshot=value=>JSON.parse(JSON.stringify(value));
+  const packState=value=>JSON.stringify(snapshot(value));
+  function unpackState(data){
+    if(typeof data?.stateJson==='string'){try{return JSON.parse(data.stateJson)}catch{return null}}
+    return data?.state?snapshot(data.state):null;
+  }
   function emit(state,detail=''){report({state,detail,user:user?{name:user.displayName||'',email:user.email||''}:null,configured:!!window.BUSAN_SYNC_CONFIG,sharing:{...sharing,isOwner:!!user&&sharing.ownerUid===user.uid}})}
   async function init(options){
     receive=options.receive;report=options.report;getLocal=options.getLocal;
@@ -12,8 +17,10 @@
       emit('loading','正在載入同步服務');
       const [appMod,authMod,storeMod]=await Promise.all([import(`${BASE}/firebase-app.js`),import(`${BASE}/firebase-auth.js`),import(`${BASE}/firebase-firestore.js`)]);
       const app=appMod.initializeApp(config);auth=authMod.getAuth(app);db=storeMod.getFirestore(app);api={...authMod,...storeMod};ready=true;
-      await authMod.getRedirectResult(auth).catch(()=>null);
+      await authMod.setPersistence(auth,authMod.browserLocalPersistence);
+      let redirectError=null;try{await authMod.getRedirectResult(auth)}catch(error){redirectError=error}
       authMod.onAuthStateChanged(auth,next=>{user=next;if(unsubscribe){unsubscribe();unsubscribe=null}sharing={ownerUid:'',ownerEmail:'',members:[]};if(!user){emit('signed-out','登入後才會跨裝置同步');return}watch()});
+      if(redirectError)emit('error',friendly(redirectError));
     }catch(error){emit('error',friendly(error))}
   }
   function ref(){return api.doc(db,'trips','busan-2026')}
@@ -23,11 +30,11 @@
     emit('syncing','正在比對雲端資料');let first=true;
     unsubscribe=api.onSnapshot(ref(),async snap=>{
       if(!snap.exists()){
-        if(first){first=false;try{const old=await api.getDoc(legacyRef()),legacy=old.exists()?old.data():null,local=getLocal();if(legacy?.state&&Number(legacy.updatedAt||legacy.state.updatedAt||0)>Number(local.updatedAt||0))receive(snapshot(legacy.state))}catch{}await pushNow()}
+        if(first){first=false;try{const old=await api.getDoc(legacyRef()),legacy=old.exists()?old.data():null,legacyState=unpackState(legacy),local=getLocal();if(legacyState&&Number(legacy.updatedAt||legacyState.updatedAt||0)>Number(local.updatedAt||0))receive(legacyState)}catch{}await pushNow()}
         return;
       }
-      first=false;const remote=snap.data(),local=getLocal();setSharing(remote);
-      if(remote.state&&Number(remote.updatedAt||0)>Number(local.updatedAt||0))receive(snapshot(remote.state));
+      first=false;const remote=snap.data(),remoteState=unpackState(remote),local=getLocal();setSharing(remote);
+      if(remoteState&&Number(remote.updatedAt||0)>Number(local.updatedAt||0))receive(remoteState);
       else if(Number(local.updatedAt||0)>Number(remote.updatedAt||0))await pushNow();
       emit('synced',`已自動同步 · ${new Date(Number(remote.updatedAt||Date.now())).toLocaleString('zh-TW')}`);
     },error=>emit('error',friendly(error)));
@@ -35,15 +42,18 @@
   async function signIn(){
     if(!ready){emit('error','Firebase 尚未設定完成');return}
     const provider=new api.GoogleAuthProvider();
-    try{await api.signInWithRedirect(auth,provider)}catch(error){emit('error',friendly(error))}
+    try{await api.signInWithPopup(auth,provider)}catch(error){
+      if(String(error?.code||'').includes('popup-blocked')){try{await api.signInWithRedirect(auth,provider)}catch(redirectError){emit('error',friendly(redirectError))}return}
+      emit('error',friendly(error));
+    }
   }
   async function signOutUser(){if(auth)await api.signOut(auth)}
   function queue(){if(!user||!ready)return;clearTimeout(pushTimer);pushTimer=setTimeout(pushNow,700)}
   async function pushNow(){
     if(!user||!ready)return;
     try{
-      const state=snapshot(getLocal()),ownerUid=sharing.ownerUid||user.uid,ownerEmail=sharing.ownerEmail||user.email,members=sharing.members.length?sharing.members:[user.email];
-      await api.setDoc(ref(),{state,updatedAt:Number(state.updatedAt||Date.now()),ownerUid,ownerEmail,members});setSharing({ownerUid,ownerEmail,members});emit('synced',`已自動同步 · ${new Date().toLocaleString('zh-TW')}`);
+      const state=snapshot(getLocal()),stateJson=packState(state),ownerUid=sharing.ownerUid||user.uid,ownerEmail=sharing.ownerEmail||user.email,members=sharing.members.length?sharing.members:[user.email];
+      await api.setDoc(ref(),{stateJson,updatedAt:Number(state.updatedAt||Date.now()),ownerUid,ownerEmail,members});setSharing({ownerUid,ownerEmail,members});emit('synced',`已自動同步 · ${new Date().toLocaleString('zh-TW')}`);
     }catch(error){emit('error',friendly(error))}
   }
   async function addMember(email){
@@ -57,7 +67,8 @@
   }
   function friendly(error){
     const code=error?.code||'';
-    if(code.includes('popup-closed'))return '登入視窗已關閉';
+    if(code.includes('popup-closed'))return '登入視窗已關閉，請再按一次登入。';
+    if(code.includes('invalid-argument'))return 'Firestore 不接受舊版資料格式，請重新整理網站後再試。';
     if(code.includes('permission-denied'))return 'Firestore 拒絕存取：請發布最新版 Rules；新帳號需先由擁有者加入 Email。';
     if(code.includes('failed-precondition'))return 'Firestore 尚未完成建立，請稍候再試。';
     if(code.includes('unauthorized-domain'))return 'Firebase 尚未授權 borischen871111.github.io 網域。';
