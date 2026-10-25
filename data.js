@@ -48,11 +48,7 @@ const DAYS = [
 ['22:10','金海起飛，隔日抵台','11/12（四）00:25 抵達桃園 T1（台灣時間）。回家接送請訂 11/12 凌晨，另留入境與提領行李時間。航空公司／航班號待補。','']
 ]}
 ];
-const FOODS = [
-['廣安里優先','平和金海後腿肉 / 평화김해뒷고기 광안리점','D1 晚餐候選'],['廣安里優先','水邊最高豬肉湯飯','D2 早餐候選，分店待確認'],['廣安里優先','baro haejang 牛肉湯','早餐替換'],['廣安里優先','廣安里尾浦家','D3 生日晚餐候選'],['廣安里優先','Nasari 食堂 / 나사리식당','你提供：부산 수영구 광안로61번길 60 3층'],['廣安里優先','cup_ancup','你提供：부산 수영구 광안해변로 177 5F'],['廣安里優先','무쇠김치삼겹','晚餐替換，廣安里分店待核對'],
-['西面／南浦候選','味贊王鹽烤肉','D2 晚餐候選'],['西面／南浦候選','83獬豸','D2 晚餐替換'],['西面／南浦候選','milgot','你提供位於富平罐頭市場；店址待核對'],
-['分店待確認','味牛','若確定海雲台店，建議 D3 午餐替換'],['分店待確認','伍班長燒肉','海雲台餐食候選，需核對店址'],['分店待確認','all Sunday','咖啡／輕食候選'],['分店待確認','working holiday','咖啡候選'],['分店待確認','diart coffee','咖啡候選'],['分店待確認','元祖堂餅','早餐候選，需確認韓文店名'],['分店待確認','自然道鹽麵包','烘焙候選'],['分店待確認','thrill on the mug','咖啡候選，不額外跨區追店'],['分店待確認','LIBERTA','咖啡候選'],['分店待確認','竝川血腸湯飯','湯飯候選'],['分店待確認','螞蟻家 / 개미집','餐食候選'],['分店待確認','having moment','咖啡／早午餐候選'],['分店待確認','60炸雞','宵夜候選'],['分店待確認','acn 麵包','烘焙候選'],['分店待確認','peak square','海景咖啡候選，確認位置後再替換'],['連鎖飲品','mega 咖啡','沿途外帶即可'],['連鎖飲品','mammoth coffee','你指定蜜桃烏龍奶茶；供應及韓文品名待門市確認'],['拍貼','Pixx','和 stiikers／analog 擇一，店址待確認'],['拍貼','stiikers','地圖核對分店後再前往'],['拍貼','analog','地圖核對分店後再前往']
-];
+// 美食口袋直接使用 places.js 中最新的 NAVER 收藏，避免分店與地址重複維護。
 const SOURCES = [
 ['藍線公園預約與開賣規則','https://www.bluelinepark.com/eng/booking.do'],['Luge 當日營業時間','https://busan.skylineluge.kr/en/visiting-us/open-hours/'],['Luge 天候與乘坐規定','https://busan.skylineluge.kr/en/visiting-us/faqs/'],['韓國觀光公社：交通卡','https://english.visitkorea.or.kr/svc/contents/infoBscView.do?menuSn=479&vcontsId=140663'],['韓國移民署：SES 資格','https://www.immigration.go.kr/immigration_eng/1859/subview.do'],['SCENTICA 官方門市','https://scentica.cafe24.com/brand/store.html'],['韓國觀光公社：扎嘎其','https://english.visitkorea.or.kr/svc/contents/contentsView.do?vcontsId=69318'],['Uber 韓國條款與付款收據','https://www.uber.com/kr/en/legal/general-terms-of-use/'],['GitHub Pages HTTPS 說明','https://docs.github.com/en/pages/getting-started-with-github-pages/securing-your-github-pages-site-with-https']
 ];
