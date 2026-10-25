@@ -34,7 +34,11 @@
         return;
       }
       first=false;const remote=snap.data(),remoteState=unpackState(remote),local=getLocal();setSharing(remote);
-      if(remoteState&&Number(remote.updatedAt||0)>Number(local.updatedAt||0))receive(remoteState);
+      // A newly invited device always starts from the shared cloud copy. The
+      // owner keeps timestamp comparison so the original latest local plan can
+      // seed or recover the shared trip without being replaced.
+      if(remoteState&&sharing.ownerUid!==user.uid)receive(remoteState);
+      else if(remoteState&&Number(remote.updatedAt||0)>Number(local.updatedAt||0))receive(remoteState);
       else if(Number(local.updatedAt||0)>Number(remote.updatedAt||0))await pushNow();
       emit('synced',`已自動同步 · ${new Date(Number(remote.updatedAt||Date.now())).toLocaleString('zh-TW')}`);
     },error=>emit('error',friendly(error)));
@@ -48,6 +52,11 @@
     }
   }
   async function signOutUser(){if(auth)await api.signOut(auth)}
+  function retry(){
+    if(!user||!ready)return;
+    if(unsubscribe){unsubscribe();unsubscribe=null}
+    sharing={ownerUid:'',ownerEmail:'',members:[]};watch();
+  }
   function queue(){if(!user||!ready)return;clearTimeout(pushTimer);pushTimer=setTimeout(pushNow,700)}
   async function pushNow(){
     if(!user||!ready)return;
@@ -75,5 +84,5 @@
     if(code.includes('unavailable'))return '目前網路無法連到 Firebase，恢復連線後會再同步。';
     return `同步失敗${code?`（${code}）`:''}，請檢查 Firebase 設定。`;
   }
-  window.CloudSync={init,signIn,signOut:signOutUser,queue,pushNow,addMember,removeMember,get configured(){return !!window.BUSAN_SYNC_CONFIG}};
+  window.CloudSync={init,signIn,signOut:signOutUser,queue,pushNow,retry,addMember,removeMember,get configured(){return !!window.BUSAN_SYNC_CONFIG}};
 })();
