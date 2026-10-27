@@ -51,6 +51,8 @@ Firebase Web config 不是私密金鑰；Firestore Rules 才是存取控制。�
 
 同步採 Firestore 即時監聽，每次本機變更延遲約 700ms 後自動寫入，不需要按手動同步。第一個建立共享行程的登入者為擁有者，可在「裝置同步」加入其他 Google Email；受邀帳號登入後共同讀寫 trips/busan-2026。受邀裝置首次連線會優先採用共享雲端內容；若裝置在受邀前已登入而被拒絕，可按「重新連線」重建監聽。完整行程以 JSON 字串存入 stateJson，避免 Standard edition 不支援陣列內再包含陣列。Firebase Console 必須發布 repository 內最新版 firebase-rules.txt，舊版 users/{uid}/trips 文件暫時保留供首次遷移。
 
+網站介面採預設唯讀：未登入、正在確認權限，或登入的 Google Email 不在共享名單時，不顯示行程編輯、完成勾選、記帳增刪、連結／備忘修改與 JSON 匯入功能；下載備份、列印、搜尋、地圖及匯率換算仍可使用。前端會在每個資料變更事件與同步寫入前再次檢查權限，只有成功讀取共享文件並確認為擁有者或受邀成員後才開放編輯。
+
 新增 budget.js：花費新增／修改／刪除、按日篩選與 KRW／TWD 分別加總。金額採整數最小單位計算，避免小數誤差。exchange.js 提供 TWD／KRW 雙向即時換算；公開匯率免 API key、每日更新並快取到下次更新，失敗時可手動輸入參考匯率。
 
 更新 GitHub 請覆蓋 index.html、style.css、data.js、app.js、sw.js，並保留 budget.js、exchange.js。先匯出本機備份，保持原網域與路徑可繼續讀取既有資料。重新整理載入新版本；手機離線請實機複驗。
