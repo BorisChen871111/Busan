@@ -49,15 +49,3 @@ const DAYS = [
 ]}
 ];
 // 美食口袋直接使用 places.js 中最新的 NAVER 收藏，避免分店與地址重複維護。
-const SOURCES = [
-['藍線公園預約與開賣規則','https://www.bluelinepark.com/eng/booking.do'],['Luge 當日營業時間','https://busan.skylineluge.kr/en/visiting-us/open-hours/'],['Luge 天候與乘坐規定','https://busan.skylineluge.kr/en/visiting-us/faqs/'],['韓國觀光公社：交通卡','https://english.visitkorea.or.kr/svc/contents/infoBscView.do?menuSn=479&vcontsId=140663'],['韓國移民署：SES 資格','https://www.immigration.go.kr/immigration_eng/1859/subview.do'],['SCENTICA 官方門市','https://scentica.cafe24.com/brand/store.html'],['韓國觀光公社：扎嘎其','https://english.visitkorea.or.kr/svc/contents/contentsView.do?vcontsId=69318'],['Uber 韓國條款與付款收據','https://www.uber.com/kr/en/legal/general-terms-of-use/'],['GitHub Pages HTTPS 說明','https://docs.github.com/en/pages/getting-started-with-github-pages/securing-your-github-pages-site-with-https']
-];
-
-// Recommendations are planning judgments, not live routing or fare quotes.
-const TRANSPORT = [
-[['金海機場 → 廣安里飯店','推薦 Uber','行李＋早班機，少轉乘；估 45–75 分鐘。預算優先則輕軌 → 沙上 → 2 號線，估 75–95 分鐘。'],['飯店 → 午餐／咖啡／海灘 → 飯店','推薦步行','同區活動，All Sunday 周邊 → 海灘 → 咖啡／晚餐；最後一段以房東提供的 Airbnb 入口為準。']],
-[['廣安里 → 白淺灘','推薦 Uber','估 40–60 分鐘，省去地鐵轉乘後再接公車；省預算改 2 號線 → 西面轉 1 號線 → 南浦接公車，約 70–95 分鐘。'],['白淺灘 → 扎嘎其','推薦 Uber','跨橋短程，抓 25–40 分鐘；無地鐵直達文化村，公車為省錢備案。'],['扎嘎其 → BIFF → 富平市場','推薦步行','同一商圈依序逛；各段約 5–15 分鐘，等店址確認再細排。'],['南浦 → 西面／田浦','推薦地鐵','1 號線往老圃方向到西面，含步行抓 35–45 分鐘。'],['西面／田浦 → 廣安里','推薦地鐵','2 號線往萇山，在廣安／金蓮山下車；含步行約 35–50 分鐘。']],
-[['廣安里 → 尾浦','推薦 Uber','有列車預約，直接到站減少步行；估 25–45 分鐘另留報到緩衝。預算優先用 2 號線至中洞／海雲台再步行，約 50–70 分鐘。'],['尾浦 → 青沙浦 → 尾浦','膠囊去、海岸列車回','體驗不同設施；依訂到的時段排，不使用 Uber 取代原本想搭的觀光列車。停駛才改車。'],['尾浦 → 海雲台 → 海理團路／蛋糕店','推薦步行','邊逛邊走；若下雨、延誤或走累可改短程 Uber，優先準時取貨。'],['蛋糕店 → 廣安里飯店','推薦 Uber','直接回飯店冷藏，約 30–50 分鐘；不帶蛋糕轉地鐵。晚餐選飯店附近步行可達。']],
-[['廣安里 → Luge → 廣安里','推薦 Uber 往返','退房日減少轉乘與等待，去程估 40–65 分鐘；回程留 60–90 分鐘。預算優先可 2 號線 → BEXCO 轉東海線 → 奧西利亞，再短程車，單程抓 75–100 分鐘。'],['廣安里咖啡／購物 → 飯店取行李','推薦步行','同區完成，16:45 開始晚餐及取行李，避免最後追加遠處店。'],['廣安里 → 金海機場','優先地鐵＋輕軌','17:45 出發，2 號線往沙上轉輕軌機場站，抓 80–100 分鐘，避免晚間道路塞車。行李多可 Uber，但先看路況，預留 60–90 分鐘，必要時更早走。']]
-];
-SOURCES.push(['Luge 官方交通方式','https://busan.skylineluge.kr/en/visiting-us/getting-here/']);
