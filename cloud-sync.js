@@ -80,7 +80,7 @@
   async function setGuideKey(value){
     const key=String(value||'').trim();
     if(!user||!authorized||sharing.ownerUid!==user.uid)throw Error('owner-only');
-    if(!/^[A-Za-z0-9_-]{43}$/.test(key))throw Error('invalid-guide-key');
+    if(!/^\d{6}$/.test(key))throw Error('invalid-guide-key');
     try{await api.updateDoc(ref(),{guideKey:key});emit('syncing','正在安全啟用住宿指南')}catch(error){emit('error',friendly(error));throw error}
   }
   function friendly(error){
