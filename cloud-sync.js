@@ -1,7 +1,7 @@
 (function(){
   const VERSION='13.1.0',BASE=`https://www.gstatic.com/firebasejs/${VERSION}`;
   let api=null,auth=null,db=null,user=null,unsubscribe=null,receive=()=>{},report=()=>{},getLocal=()=>null,pushTimer=null,ready=false,authorized=false;
-  let sharing={ownerUid:'',ownerEmail:'',members:[]};
+  let sharing={ownerUid:'',ownerEmail:'',members:[],guideKey:''};
   const snapshot=value=>JSON.parse(JSON.stringify(value));
   const packState=value=>JSON.stringify(snapshot(value));
   function unpackState(data){
@@ -25,7 +25,7 @@
   }
   function ref(){return api.doc(db,'trips','busan-2026')}
   function legacyRef(){return api.doc(db,'users',user.uid,'trips','busan-2026')}
-  function setSharing(data){sharing={ownerUid:data.ownerUid||'',ownerEmail:data.ownerEmail||'',members:Array.isArray(data.members)?data.members:[]}}
+  function setSharing(data){sharing={ownerUid:data.ownerUid||'',ownerEmail:data.ownerEmail||'',members:Array.isArray(data.members)?data.members:[],guideKey:typeof data.guideKey==='string'?data.guideKey:''}}
   function isAllowed(){const email=String(user?.email||'').toLowerCase();return !!user&&(sharing.ownerUid===user.uid||sharing.members.some(member=>String(member).toLowerCase()===email))}
   function watch(){
     authorized=false;emit('syncing','正在確認這個 Google 帳號的編輯權限');let first=true;
@@ -63,8 +63,9 @@
   async function pushNow(){
     if(!user||!ready||!authorized)return;
     try{
-      const state=snapshot(getLocal()),stateJson=packState(state),ownerUid=sharing.ownerUid||user.uid,ownerEmail=sharing.ownerEmail||user.email,members=sharing.members.length?sharing.members:[user.email];
-      await api.setDoc(ref(),{stateJson,updatedAt:Number(state.updatedAt||Date.now()),ownerUid,ownerEmail,members});setSharing({ownerUid,ownerEmail,members});emit('synced',`已自動同步 · ${new Date().toLocaleString('zh-TW')}`);
+      const state=snapshot(getLocal()),stateJson=packState(state),ownerUid=sharing.ownerUid||user.uid,ownerEmail=sharing.ownerEmail||user.email,members=sharing.members.length?sharing.members:[user.email],payload={stateJson,updatedAt:Number(state.updatedAt||Date.now()),ownerUid,ownerEmail,members};
+      if(sharing.guideKey)payload.guideKey=sharing.guideKey;
+      await api.setDoc(ref(),payload);setSharing({...payload});emit('synced',`已自動同步 · ${new Date().toLocaleString('zh-TW')}`);
     }catch(error){emit('error',friendly(error))}
   }
   async function addMember(email){
@@ -76,6 +77,12 @@
     const value=String(email||'').trim().toLowerCase();if(!user||sharing.ownerUid!==user.uid||value===sharing.ownerEmail)return;
     try{await api.updateDoc(ref(),{members:api.arrayRemove(value)});emit('syncing','正在移除共享帳號')}catch(error){emit('error',friendly(error))}
   }
+  async function setGuideKey(value){
+    const key=String(value||'').trim();
+    if(!user||!authorized||sharing.ownerUid!==user.uid)throw Error('owner-only');
+    if(!/^[A-Za-z0-9_-]{43}$/.test(key))throw Error('invalid-guide-key');
+    try{await api.updateDoc(ref(),{guideKey:key});emit('syncing','正在安全啟用住宿指南')}catch(error){emit('error',friendly(error));throw error}
+  }
   function friendly(error){
     const code=error?.code||'';
     if(code.includes('popup-closed'))return '登入視窗已關閉，請再按一次登入。';
@@ -86,5 +93,5 @@
     if(code.includes('unavailable'))return '目前網路無法連到 Firebase，恢復連線後會再同步。';
     return `同步失敗${code?`（${code}）`:''}，請檢查 Firebase 設定。`;
   }
-  window.CloudSync={init,signIn,signOut:signOutUser,queue,pushNow,retry,addMember,removeMember,get configured(){return !!window.BUSAN_SYNC_CONFIG}};
+  window.CloudSync={init,signIn,signOut:signOutUser,queue,pushNow,retry,addMember,removeMember,setGuideKey,get configured(){return !!window.BUSAN_SYNC_CONFIG}};
 })();

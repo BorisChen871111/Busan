@@ -53,6 +53,8 @@ Firebase Web config 不是私密金鑰；Firestore Rules 才是存取控制。�
 
 網站介面採預設唯讀：未登入、正在確認權限，或登入的 Google Email 不在共享名單時，不顯示行程編輯、完成勾選、記帳增刪、連結／備忘修改與 JSON 匯入功能；下載備份、列印、搜尋、地圖及匯率換算仍可使用。前端會在每個資料變更事件與同步寫入前再次檢查權限，只有成功讀取共享文件並確認為擁有者或受邀成員後才開放編輯。
 
+住宿指南包含 Wi-Fi 密碼與完整地址，因此不將原始 PDF 放入公開 GitHub repository。網站保存的 `assets/le-plage-guide.enc` 是以 AES-256-GCM 加密的 9 頁行動版圖像；解密金鑰只存在受 Firestore Rules 保護的共享行程文件，登入且在共享 Gmail 名單內才會載入。頁面解密後只建立記憶體中的 Blob URL，不寫入 localStorage；公開訪客只能取得無法讀取的密文。
+
 新增 budget.js：花費新增／修改／刪除、按日篩選與 KRW／TWD 分別加總。金額採整數最小單位計算，避免小數誤差。exchange.js 提供 TWD／KRW 雙向即時換算；公開匯率免 API key、每日更新並快取到下次更新，失敗時可手動輸入參考匯率。
 
 更新 GitHub 請覆蓋 index.html、style.css、data.js、app.js、sw.js，並保留 budget.js、exchange.js。先匯出本機備份，保持原網域與路徑可繼續讀取既有資料。重新整理載入新版本；手機離線請實機複驗。
